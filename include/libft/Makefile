@@ -6,7 +6,7 @@
 #    By: ltrevin- <ltrevin-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/10 17:25:42 by ltrevin-          #+#    #+#              #
-#    Updated: 2024/08/01 16:16:54 by ltrevin-         ###   ########.fr        #
+#    Updated: 2024/08/05 13:28:07 by ltrevin-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,7 @@ $(NAME): $(OBJECTS)  $(DEPS)
 	@$(AR) $(NAME) $(OBJECTS)
 	@echo "📚 Library created!"
 
-bonus: $(OBJECTS) $(OBJECTS_BNS) $(GNL_OBJECTS) $(PRINTF) $(DEPS)
+bonus: $(OBJECTS) $(OBJECTS_BNS) $(GNL_OBJECTS) $(DEPS) | ft_printf
 	@$(AR) $(NAME) $(OBJECTS) $(OBJECTS_BNS) $(GNL_OBJECTS) $(PRINTF_OBJECTS)
 	@echo "📚🌟 Libft with bonus, get_next_line & ft_printf created!"
 	@touch bonus
@@ -61,9 +61,11 @@ bonus: $(OBJECTS) $(OBJECTS_BNS) $(GNL_OBJECTS) $(PRINTF) $(DEPS)
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/$(GNL_DIR)
 	@$(CC) $(FLAGS) -c $< -o $@
+	@echo "\033[0;32m🛠  \033[0;35m$(@F:.o=) \033[0;34mobject created!\033[0m"
+	@echo "\033[0;35m🛠  $(@F:.o=) \033[0;34mobject created!\033[0m"
 	@echo "🛠  $(@F:.o=) object created!"
 
-$(PRINTF):
+ft_printf:
 	@make -C $(PRINTF_DIR) --no-print-directory
 clean:
 	@rm -rf $(OBJ_DIR)
@@ -76,5 +78,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
-
+.PHONY: all clean fclean re ft_printf
