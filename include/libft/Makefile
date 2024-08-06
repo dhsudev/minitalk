@@ -6,19 +6,36 @@
 #    By: ltrevin- <ltrevin-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/10 17:25:42 by ltrevin-          #+#    #+#              #
-#    Updated: 2024/08/05 13:28:07 by ltrevin-         ###   ########.fr        #
+#    Updated: 2024/08/06 15:55:41 by ltrevin-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+########## COLORS
+RESET   		= \033[0m
+BLACK   		= \033[0;30m
+RED     		= \033[0;31m
+GREEN   		= \033[0;32m
+YELLOW  		= \033[0;33m
+BLUE    		= \033[0;34m
+MAGENTA 		= \033[0;35m
+CYAN   			= \033[0;36m
+WHITE   		= \033[0;37m
+
+BOLD    		= \033[1m
+UNDERLINE 		= \033[4m
+
+########## GENERAL
 NAME          = libft.a
 HEADER_FILE   = libft.h
 CC            = gcc
 FLAGS         = -Wall -Wextra -Werror
 AR            = ar rcs
+
 ##########  DIRECTORY ROUTES
 OBJ_DIR       = ./obj
 GNL_DIR		  = ./get_next_line
 PRINTF_DIR    = ./ft_printf
+
 ##########  FILES
 SRC_FILES     = ft_atoi.c       ft_isalpha.c    ft_memchr.c     ft_memset.c     ft_strlcat.c    ft_strrchr.c\
                 ft_bzero.c      ft_isascii.c    ft_memcmp.c     ft_strchr.c     ft_strlcpy.c    ft_tolower.c\
@@ -62,8 +79,6 @@ $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/$(GNL_DIR)
 	@$(CC) $(FLAGS) -c $< -o $@
 	@echo "\033[0;32m🛠  \033[0;35m$(@F:.o=) \033[0;34mobject created!\033[0m"
-	@echo "\033[0;35m🛠  $(@F:.o=) \033[0;34mobject created!\033[0m"
-	@echo "🛠  $(@F:.o=) object created!"
 
 ft_printf:
 	@make -C $(PRINTF_DIR) --no-print-directory
