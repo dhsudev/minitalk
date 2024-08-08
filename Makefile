@@ -6,7 +6,7 @@
 #    By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/06 15:49:51 by ltrevin-          #+#    #+#              #
-#    Updated: 2024/08/06 16:02:40 by ltrevin-         ###   ########.fr        #
+#    Updated: 2024/08/08 13:06:23 by ltrevin-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,6 @@ OBJ_CLIENT_BONUS = $(SRC_CLIENT_BONUS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 ########## RULES ##########
 
-# Default rule
 all: libft $(NAME_SERVER) $(NAME_CLIENT)
 
 bonus: libft $(NAME_SERVER_BONUS) $(NAME_CLIENT_BONUS)
