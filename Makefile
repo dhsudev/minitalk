@@ -6,7 +6,7 @@
 #    By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/06 15:49:51 by ltrevin-          #+#    #+#              #
-#    Updated: 2024/08/08 16:07:56 by ltrevin-         ###   ########.fr        #
+#    Updated: 2024/08/09 17:56:59 by ltrevin-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -97,7 +97,7 @@ libft:
 
 
 banner:
-	@echo "$(CYAN)==============${BLUE} Welcome to Lua's Minitalk $(CYAN)==============$(RESET)"
+	@echo "\n$(CYAN)==============${BLUE} Welcome to Lua's Minitalk $(CYAN)==============$(RESET)"
 	@echo "	$(MAGENTA)	⠀⠀⠀⠀⠀⠀⠀⢀⣀⡤⠴⠶⠶⠒⠲⠦⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
 	@echo '		⠀⠀⠀⠀⢀⡠⠞⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠲⠤⣄⡀⠀⠀⠀⠀⠀'
 	@echo '		⠀⠀⣀⡴⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⡿⠀⠀⠀⠀⠀'
