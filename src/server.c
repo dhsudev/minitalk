@@ -6,25 +6,59 @@
 /*   By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 15:32:07 by ltrevin-          #+#    #+#             */
-/*   Updated: 2024/08/11 19:44:30 by ltrevin-         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:00:13 by ltrevin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minitalk.h>
 
+ 
+
+void handle_char(t_info *data)
+{
+	if(data->ch == '\0')
+	{
+		ft_printf("%sRecived message of %d bytes:%s %s\n",BLUE, data->bytes, RESET, data->message);
+		free(data->message);
+		data->msg_pos = 0;
+		data->bytes = 0;
+		kill(data->cli_pid, SIGUSR1);
+	}
+	else 
+	{
+		ft_printf("%sDebug:%s adding %c to string\n", YELLOW, RESET, data->ch);
+		data->message[data->msg_pos] = data->ch;
+		data->bits = 0;
+		data->msg_pos++;
+	}
+}
+
 void handle_signals(int sig, siginfo_t *info, void *context)
 {
-	static int cli_pid;
-	static int end = 0;
-	static char* message;
-	char ch;
-
-	// Primer mensaje que recibo o cambio de cliente
-	if(!cli_pid || (end && cli_pid != info->si_pid))
-		ft_printf("Helllooow\n\n\n");
-	ft_printf("%sRecived signal:%s %d from pid[%d]\n", CYAN, RESET, sig, info->si_pid);
-	(void)info;
+	static t_info data;
+	
 	(void)context;
+	if(!data.cli_pid || (data.bytes == 0 && data.cli_pid != info->si_pid))
+	{
+		ft_printf("%sDEBUG:%s Reciving from new client\n\n", YELLOW, RESET);
+		data.cli_pid = info->si_pid;
+		data.bytes = 0;
+		data.bits = 0;
+		data.len = 0;
+	}
+	ft_printf("%sRecived signal:%s %d from pid[%d]\n", CYAN, RESET, sig, info->si_pid);
+	data.ch |= (sig == SIGUSR2);
+	data.bits++;	
+	if(data.bits == 8)
+	{
+		if(data.bytes == sizeof(int))
+			data.message = malloc(sizeof(char) * data.len);
+		handle_char(&data);
+		data.bytes++;
+	} 
+	data.ch <<= 1;
+	usleep(100);
+	kill(data.cli_pid, SIGUSR2);
 }
 
 int	main(void)
