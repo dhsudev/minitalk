@@ -6,7 +6,7 @@
 /*   By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 15:32:04 by ltrevin-          #+#    #+#             */
-/*   Updated: 2024/08/11 19:28:08 by ltrevin-         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:19:21 by ltrevin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	send_bit(int pid, int bit)
 {
 	int	sent;
 
+	usleep(300);
 	if (bit == 1)
 		sent = kill(pid, SIGUSR1);
 	else
@@ -26,15 +27,15 @@ void	send_bit(int pid, int bit)
 		ft_printf("check the PID and if the server is still running please\n");
 		exit(1);
 	}
-	ft_printf("%sSending bit:%s %d \n", CYAN, RESET, bit);
-	usleep(20);
+	//ft_printf("%sSending bit:%s %d \n", CYAN, RESET, bit);
+	pause();
 }
 
 void	send_char(int pid, char ch)
 {
 	int bits;
 	bits = sizeof(char) * 8;
-	ft_printf("%sDebug:%s Sent '%c' to server [%d]\n",YELLOW, RESET, ch, pid);
+	//ft_printf("%sDebug:%s Sent '%c' to server [%d]\n",YELLOW, RESET, ch, pid);
 	while(bits--)
 		send_bit(pid, (ch >> bits) & 1);\
 }
@@ -67,7 +68,7 @@ void recieved(int sig)
 
 	if (sig == SIGUSR1)
 	{
-		ft_printf("%s%d signal sent successfully!%s\n", GREEN, ++sent, RESET);
+		ft_printf("%sMessage sent successfully!%s\n", GREEN, RESET);
 		exit(0);
 	}
 	if (sig == SIGUSR2)

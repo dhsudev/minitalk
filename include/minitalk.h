@@ -6,7 +6,7 @@
 /*   By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 18:19:55 by ltrevin-          #+#    #+#             */
-/*   Updated: 2024/08/12 13:54:41 by ltrevin-         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:01:22 by ltrevin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ typedef struct s_info
 	char	*message;
 	int		cli_pid;
 	int		bits;
-	int		bytes;
+	unsigned int		bytes;
 	char	ch;
-	int len;
+	unsigned int len;
 	int msg_pos;
 }			t_info;
 

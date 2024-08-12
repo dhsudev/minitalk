@@ -6,7 +6,7 @@
 /*   By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 15:32:07 by ltrevin-          #+#    #+#             */
-/*   Updated: 2024/08/12 14:00:13 by ltrevin-         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:19:23 by ltrevin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,18 @@ void handle_char(t_info *data)
 {
 	if(data->ch == '\0')
 	{
-		ft_printf("%sRecived message of %d bytes:%s %s\n",BLUE, data->bytes, RESET, data->message);
+		
+		ft_printf("%sNew message!%s %s\n",BLUE, RESET, data->message);
 		free(data->message);
 		data->msg_pos = 0;
 		data->bytes = 0;
+		data->bits = 0;
+		usleep(300);
 		kill(data->cli_pid, SIGUSR1);
 	}
 	else 
 	{
-		ft_printf("%sDebug:%s adding %c to string\n", YELLOW, RESET, data->ch);
+	//	ft_printf("%sDebug:%s adding '%c' to string\n", YELLOW, RESET, data->ch);
 		data->message[data->msg_pos] = data->ch;
 		data->bits = 0;
 		data->msg_pos++;
@@ -40,24 +43,46 @@ void handle_signals(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if(!data.cli_pid || (data.bytes == 0 && data.cli_pid != info->si_pid))
 	{
-		ft_printf("%sDEBUG:%s Reciving from new client\n\n", YELLOW, RESET);
+	//	ft_printf("\n%sDEBUG:%s Reciving from new client!\n\n", YELLOW, RESET);
 		data.cli_pid = info->si_pid;
 		data.bytes = 0;
 		data.bits = 0;
 		data.len = 0;
 	}
-	ft_printf("%sRecived signal:%s %d from pid[%d]\n", CYAN, RESET, sig, info->si_pid);
-	data.ch |= (sig == SIGUSR2);
-	data.bits++;	
-	if(data.bits == 8)
+	//ft_printf("%sRecived signal:%s %d from pid[%d]\n", CYAN, RESET, sig, info->si_pid);
+	data.bits++;
+	if (data.bytes < sizeof(int))
 	{
-		if(data.bytes == sizeof(int))
-			data.message = malloc(sizeof(char) * data.len);
-		handle_char(&data);
-		data.bytes++;
-	} 
-	data.ch <<= 1;
-	usleep(100);
+		data.len |= (sig == SIGUSR1);
+		if (data.bits == 8)
+		{
+			data.bytes++;
+			data.bits = 0;
+		}
+		if (data.bytes == sizeof(int))
+		{
+		//	ft_printf("%sDEBUG:%s La longitud del mensaje es %d caracteres\n", YELLOW, RESET, data.len);
+			data.message = malloc(sizeof(char) * (data.len + 1));
+			if (!data.message)
+			{
+				//ft_printf("%sERROR:%s No se pudo reservar memoria\n", RED, RESET);
+				exit(1);
+			}
+			data.message[data.len] = '\0'; // Terminar la cadena
+		}
+		data.len <<= 1;
+	}
+	else 
+	{
+		data.ch |= (sig == SIGUSR1);
+		if(data.bits == 8)
+		{
+			data.bytes++;
+			data.bits = 0;
+			handle_char(&data);
+		}
+		data.ch <<= 1;
+	}
 	kill(data.cli_pid, SIGUSR2);
 }
 
