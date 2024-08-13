@@ -6,7 +6,7 @@
 /*   By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 15:32:07 by ltrevin-          #+#    #+#             */
-/*   Updated: 2024/08/12 17:29:50 by ltrevin-         ###   ########.fr       */
+/*   Updated: 2024/08/13 18:41:52 by ltrevin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	handle_char(t_info *data)
 		data->msg_pos = 0;
 		data->bytes = 0;
 		data->bits = 0;
-		usleep(300);
 		kill(data->cli_pid, SIGUSR1);
 	}
 	else
@@ -32,38 +31,49 @@ void	handle_char(t_info *data)
 	}
 }
 
+void	save_length(t_info *data, int sig)
+{
+	data->len |= (sig == SIGUSR1);
+	if (data->bits == 8)
+	{
+		data->bytes++;
+		data->bits = 0;
+	}
+	if (data->bytes == sizeof(int))
+	{
+		data->message = malloc(sizeof(char) * (data->len + 1));
+		if (!data->message)
+		{
+			ft_printf("%sError:%s problem allocating memory", RED, RESET);
+			exit(1);
+		}
+		data->message[data->len] = '\0';
+	}
+	data->len <<= 1;
+}
+
+void	reset_info_struct(t_info *data, int pid)
+{
+	data->cli_pid = pid;
+	data->bytes = 0;
+	data->bits = 0;
+	data->len = 0;
+}
+
 void	handle_signals(int sig, siginfo_t *info, void *context)
 {
 	static t_info	data;
 
-	(void)context;
 	if (!data.cli_pid || (data.bytes == 0 && data.cli_pid != info->si_pid))
+		reset_info_struct(&data, info->si_pid);
+	if (data.cli_pid != info->si_pid)
 	{
-		data.cli_pid = info->si_pid;
-		data.bytes = 0;
-		data.bits = 0;
-		data.len = 0;
+		kill(info->si_pid, SIGUSR1);
+		return ((void)context);
 	}
 	data.bits++;
 	if (data.bytes < sizeof(int))
-	{
-		data.len |= (sig == SIGUSR1);
-		if (data.bits == 8)
-		{
-			data.bytes++;
-			data.bits = 0;
-		}
-		if (data.bytes == sizeof(int))
-		{
-			data.message = malloc(sizeof(char) * (data.len + 1));
-			if (!data.message)
-			{
-				exit(1);
-			}
-			data.message[data.len] = '\0'; // Terminar la cadena
-		}
-		data.len <<= 1;
-	}
+		save_length(&data, sig);
 	else
 	{
 		data.ch |= (sig == SIGUSR1);

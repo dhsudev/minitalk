@@ -6,7 +6,7 @@
 /*   By: ltrevin- <ltrevin-@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 15:32:04 by ltrevin-          #+#    #+#             */
-/*   Updated: 2024/08/12 17:43:19 by ltrevin-         ###   ########.fr       */
+/*   Updated: 2024/08/13 18:43:10 by ltrevin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,6 @@ void	send_bit(int pid, int bit)
 	pause();
 }
 
-void	send_char(int pid, char ch)
-{
-	int	bits;
-
-	bits = sizeof(char) * 8;
-	while (bits--)
-		send_bit(pid, (ch >> bits) & 1);
-}
-
 int	send_lenght(int pid, int len)
 {
 	int	bits;
@@ -53,19 +44,27 @@ int	send_lenght(int pid, int len)
 void	send_message(int pid, char *message)
 {
 	int	i;
+	int	bits;
 
 	send_lenght(pid, ft_strlen(message));
 	i = 0;
 	while (message[i])
-		send_char(pid, message[i++]);
-	send_char(pid, '\0');
+	{
+		bits = sizeof(char) * 8;
+		while (bits--)
+			send_bit(pid, (message[i] >> bits) & 1);
+		i++;
+	}
+	bits = sizeof(char) * 8;
+	while (bits--)
+		send_bit(pid, ('\0' >> bits) & 1);
 }
 
-void	recieved(int sig)
+void	received(int sig)
 {
 	if (sig == SIGUSR1)
 	{
-		ft_printf("%sMessage sent successfully!%s\n", GREEN, RESET);
+		ft_printf("%sClosed connection!%s\n", GREEN, RESET);
 		exit(0);
 	}
 }
@@ -83,8 +82,8 @@ int	main(int argc, char **argv)
 		{
 			ft_printf("%sWelcome to lua's minitalk client! 🦦🔅\n", CYAN, RESET);
 			ft_printf("%s\tPID:%s %d\n\n", MAGENTA, RESET, getpid());
-			signal(SIGUSR1, recieved);
-			signal(SIGUSR2, recieved);
+			signal(SIGUSR1, received);
+			signal(SIGUSR2, received);
 			ft_printf("%sSending text.. %s\n", CYAN, RESET);
 			send_message(srv_pid, argv[2]);
 			return (0);
